@@ -1,0 +1,12 @@
+name: artisan_finds
+services:
+  code-db:
+    image: postgres:16.1
+    ports:
+      - "5433:5432"
+    environment:
+      - "POSTGRES_PASSWORD=postgres"
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"

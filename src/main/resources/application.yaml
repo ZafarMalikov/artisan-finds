@@ -1,0 +1,32 @@
+allowed:
+  origins: http://localhost:3000
+
+spring:
+
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/postgres
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+jwt:
+  security:
+    key: fGI9opiU1LvF18BRMZBJD3tFCy4QtSjIzh2X7rvbKKb2HqTZrreiQC9EzMqiosmq
+
+artisan_finds:
+  eskiz:
+    sms:
+      token: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDg4NjY2NDcsImlhdCI6MTcwNjI3NDY0Nywicm9sZSI6InRlc3QiLCJzaWduIjoiYzQxMjU2OTNhZTBlNmIwZGYxMTFjMjZkNmE2ZTM4ZDllOGQ1MGNmMmRhMzI0NmFjZGM4ZWE2MDE0YmMwNTdjMCIsInN1YiI6IjU3NzMifQ.dNgyUXLFZgCSp5ujk0VSx_jefJNEHHTfNzhlE6nWmR8
+
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        security: trace
+server:
+  port: 8082
