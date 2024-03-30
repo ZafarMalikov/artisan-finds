@@ -4,7 +4,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY . .
-RUN ./gradlew bootJar --no-daemon
+RUN chmod +x gradlew && \
+    ./gradlew bootJar --no-daemon
 
 FROM openjdk:17-jdk
 EXPOSE 8082
