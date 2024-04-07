@@ -1,4 +1,4 @@
-package com.example.artisan_finds.category.entity;
+package com.example.artisan_finds.category;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.example.artisan_finds.user.dto;
 
-import com.example.artisan_finds.category.entity.CategoryType;
+import com.example.artisan_finds.category.CategoryType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,5 +15,4 @@ public class UserRegisterRequestDto {
     private String email;
     private String phoneNumber;
     private String password;
-    private CategoryType categoryType;
 }

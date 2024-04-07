@@ -1,7 +1,7 @@
 package com.example.artisan_finds.product.dto;
 
-import com.example.artisan_finds.category.entity.CategoryType;
-import com.example.artisan_finds.category.entity.SubCategories;
+import com.example.artisan_finds.category.CategoryType;
+import com.example.artisan_finds.category.SubCategories;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,5 +16,5 @@ public class ProductResponseDto {
     private String info;
     private CategoryType categoryType;
     private SubCategories subCategories;
-    private Integer userId;
+    private Integer id;
 }

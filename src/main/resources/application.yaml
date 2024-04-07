@@ -5,9 +5,9 @@ spring:
 
 
   datasource:
-    url: jdbc:postgresql://localhost:5433/postgres
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://dpg-co986gdjm4es73aqpvkg-a.oregon-postgres.render.com:5432/postgress_5utu
+    username: postgress
+    password: jQlyhL4AVgmrzPNlWNUDE0FNDW83yM33
   jpa:
     hibernate:
       ddl-auto: update
@@ -21,7 +21,7 @@ jwt:
 artisan_finds:
   eskiz:
     sms:
-      token: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDg4NjY2NDcsImlhdCI6MTcwNjI3NDY0Nywicm9sZSI6InRlc3QiLCJzaWduIjoiYzQxMjU2OTNhZTBlNmIwZGYxMTFjMjZkNmE2ZTM4ZDllOGQ1MGNmMmRhMzI0NmFjZGM4ZWE2MDE0YmMwNTdjMCIsInN1YiI6IjU3NzMifQ.dNgyUXLFZgCSp5ujk0VSx_jefJNEHHTfNzhlE6nWmR8
+      token: oDWIaq4FkvjmGwqTjbXSstNBuGcm3EgQGp8pL2Ys8zUEkR12nBG0eSCxB6iVgmQ7
 
 #logging:
 #  level:

@@ -1,7 +1,7 @@
 package com.example.artisan_finds.product.entity;
 
-import com.example.artisan_finds.category.entity.CategoryType;
-import com.example.artisan_finds.category.entity.SubCategories;
+import com.example.artisan_finds.category.CategoryType;
+import com.example.artisan_finds.category.SubCategories;
 import com.example.artisan_finds.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

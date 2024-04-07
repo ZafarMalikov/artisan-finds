@@ -1,8 +1,7 @@
 package com.example.artisan_finds.product.dto;
 
-import com.example.artisan_finds.category.entity.CategoryType;
-import com.example.artisan_finds.category.entity.SubCategories;
-import com.example.artisan_finds.product.entity.ProductType;
+import com.example.artisan_finds.category.CategoryType;
+import com.example.artisan_finds.category.SubCategories;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;

@@ -1,7 +1,7 @@
 package com.example.artisan_finds.product;
 
-import com.example.artisan_finds.category.entity.CategoryType;
-import com.example.artisan_finds.category.entity.SubCategories;
+import com.example.artisan_finds.category.CategoryType;
+import com.example.artisan_finds.category.SubCategories;
 import com.example.artisan_finds.common.service.GenericCrudService;
 import com.example.artisan_finds.product.dto.ProductCreateDto;
 import com.example.artisan_finds.product.dto.ProductPatchDto;
@@ -13,13 +13,11 @@ import com.example.artisan_finds.user.entity.User;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Getter
@@ -57,12 +55,12 @@ public class ProductService extends GenericCrudService<Product, Integer, Product
 
 
 
-    public List<ProductResponseDto> getAllByType(CategoryType categoryType, Pageable pageable, String predicate) {
+    public List<ProductResponseDto> getAllByType(CategoryType categoryType) {
        return repository.findAll()
                .stream()
-               .filter(product -> product.getCategoryType()==categoryType)
-               .map(mapper::toResponseDto)
-               .toList();
+               .filter(
+                       product -> product.getCategoryType()==categoryType)
+               .map(mapper::toResponseDto).toList();
     }
 
     public List<ProductResponseDto> getAllBySubCategories(SubCategories subCategories) {

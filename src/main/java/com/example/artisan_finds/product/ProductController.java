@@ -1,21 +1,17 @@
 package com.example.artisan_finds.product;
 
 
-import com.example.artisan_finds.category.entity.CategoryType;
-import com.example.artisan_finds.category.entity.SubCategories;
+import com.example.artisan_finds.category.CategoryType;
+import com.example.artisan_finds.category.SubCategories;
 import com.example.artisan_finds.product.dto.ProductCreateDto;
 import com.example.artisan_finds.product.dto.ProductResponseDto;
-import com.example.artisan_finds.product.entity.Product;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/product")
@@ -33,13 +29,11 @@ public class ProductController {
     }
 
 
-    @GetMapping("/type")
-    public ResponseEntity<List<ProductResponseDto>> getAllProductByType(
-            @RequestParam CategoryType categoryType,
-            Pageable pageable,
-            @RequestParam(required = false) String predicate
+    @GetMapping("/product-by-type")
+    public ResponseEntity<List<ProductResponseDto>> getAllProductByBaseCategory(
+            @RequestParam CategoryType categoryType
     ) {
-        List<ProductResponseDto> allByType = productService.getAllByType(categoryType, pageable, predicate);
+        List<ProductResponseDto> allByType = productService.getAllByType(categoryType);
 
         return ResponseEntity.ok(allByType);
     }
@@ -49,6 +43,12 @@ public class ProductController {
     public ResponseEntity<List<ProductResponseDto>>getAllProductBySubCategories(@RequestParam SubCategories subCategories){
         List<ProductResponseDto> allBySubCategories = productService.getAllBySubCategories(subCategories);
         return ResponseEntity.ok(allBySubCategories);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponseDto>getById(@PathVariable("id")Integer id) {
+        ProductResponseDto byId = productService.getById(id);
+        return ResponseEntity.ok(byId);
     }
 
 

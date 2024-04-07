@@ -2,12 +2,13 @@ package com.example.artisan_finds.user;
 
 import com.example.artisan_finds.common.exception.ExceptionUNAUTHORIZED;
 import com.example.artisan_finds.common.exception.PhoneNumberNotVerifiedException;
+import com.example.artisan_finds.common.exception.UserNameAllReadyTaken;
 import com.example.artisan_finds.common.service.GenericCrudService;
 import com.example.artisan_finds.notification.AbstractNotification;
 import com.example.artisan_finds.notification.NotificationService;
 import com.example.artisan_finds.notification.NotificationType;
-import com.example.artisan_finds.notification.dto.NotificationRequestDto;
 import com.example.artisan_finds.user.dto.*;
+import com.example.artisan_finds.user.entity.Role;
 import com.example.artisan_finds.user.entity.User;
 import com.example.artisan_finds.user.otp.OTPRepository;
 import com.example.artisan_finds.user.otp.entity.OTP;
@@ -17,7 +18,6 @@ import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -32,18 +32,16 @@ import java.util.Random;
 @RequiredArgsConstructor
 @Getter
 public class UserService extends
-        GenericCrudService<User,Integer,  UserCreateDto, UserUpdateDto, UserPatchDto, UserResponseDto>
+        GenericCrudService<User, Integer, UserCreateDto, UserUpdateDto, UserPatchDto, UserResponseDto>
         implements UserDetailsService {
 
-
     private final UserDtoMapper mapper;
-    private final Class<User> entityClass=User.class;
+    private final Class<User> entityClass = User.class;
     private final OTPRepository otpRepository;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
     private final NotificationService notificationService;
     private final UserRepository repository;
-
 
 
     @Override
@@ -54,14 +52,14 @@ public class UserService extends
 
     @Override
     protected User updateEntity(UserUpdateDto userUpdateDto, User user) {
-        mapper.update(userUpdateDto,user);
+        mapper.update(userUpdateDto, user);
         return repository.save(user);
     }
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-       return repository.findUserByPhoneNumber(username).orElseThrow(EntityNotFoundException::new);
+        return repository.findUserByPhoneNumber(username).orElseThrow(EntityNotFoundException::new);
 
     }
 
@@ -75,15 +73,15 @@ public class UserService extends
         OTP otp = modelMapper.map(userCreateDto, OTP.class);
         otp.setSendTime(LocalDateTime.now());
         otp.setSentCount(1);
-        otp.setCode(String.valueOf(new Random().nextInt(1000,9999)));
+        otp.setCode(String.valueOf(new Random().nextInt(1000, 9999)));
 
         AbstractNotification service = notificationService.getService(NotificationType.SMS);
 //        boolean isSend = service.sendNotification(new NotificationRequestDto(otp.getPhoneNumber(), "Your verification code: %d ".formatted(otp.getCode())));
-        boolean isSend=true;
-        if (isSend){
+        boolean isSend = true;
+        if (isSend) {
             OTP save = otpRepository.save(otp);
-            return modelMapper.map(save,UserResponseDto.class);
-        }else {
+            return modelMapper.map(save, UserResponseDto.class);
+        } else {
             throw new RuntimeException();
         }
 
@@ -98,8 +96,11 @@ public class UserService extends
             Optional<User> byPhoneNumber = repository.findUserByPhoneNumber(req.getPhoneNumber());
 
             if (byPhoneNumber.isPresent()) {
-                // todo handle exception
-                throw new RuntimeException("this username ol ready taken");
+                try {
+                    throw new UserNameAllReadyTaken("this username ol ready taken");
+                } catch (UserNameAllReadyTaken e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
@@ -110,26 +111,27 @@ public class UserService extends
         OTP otp = otpRepository.findById(otpVerifyDto.getPhoneNumber())
                 .orElseThrow(() -> new ExceptionUNAUTHORIZED("You need to register first"));
 
-        if (otp.getSendTime().plusSeconds(60).isBefore(LocalDateTime.now())){
+        if (otp.getSendTime().plusSeconds(60).isBefore(LocalDateTime.now())) {
 
-            if (otp.getSentCount()>=3){
+            if (otp.getSentCount() >= 3) {
                 otp.setIsBlocked(true);
                 throw new PhoneNumberNotVerifiedException("Please try again in a day");
-            }else {
+            } else {
 
                 sentVerificationCode(otp.getPhoneNumber());
             }
-                throw new RuntimeException("Your verification code is invalid");
-        }else {
-            if (otp.getCode().equals(otpVerifyDto.getCode())){
+            throw new RuntimeException("Your verification code is invalid");
+        } else {
+            if (otp.getCode().equals(otpVerifyDto.getCode())) {
 
                 User user = modelMapper.map(otp, User.class);
+                user.setRole(Role.USER);
 
                 Optional<User> optionalUser = repository.findUserByPhoneNumber(user.getPhoneNumber());
-                if (optionalUser.isPresent()){
+                if (optionalUser.isPresent()) {
                     repository.delete(user);
-                }else {
-                repository.save(user);
+                } else {
+                    repository.save(user);
                 }
                 otpRepository.delete(otp);
 
@@ -145,15 +147,15 @@ public class UserService extends
                 .orElseThrow(() -> new ExceptionUNAUTHORIZED("You need to register first"));
 
 
-            if (otp.getSentCount() >= 3) {
-                throw new PhoneNumberNotVerifiedException("Please try again in a day");
-            }
+        if (otp.getSentCount() >= 3) {
+            throw new PhoneNumberNotVerifiedException("Please try again in a day");
+        }
 
-            AbstractNotification service = notificationService.getService(NotificationType.SMS);
+        AbstractNotification service = notificationService.getService(NotificationType.SMS);
 
-            otp.setCode(String.valueOf(new Random().nextInt(1000, 9999)));
-            otp.setSentCount(otp.getSentCount() + 1);
-            otp.setSendTime(LocalDateTime.now());
+        otp.setCode(String.valueOf(new Random().nextInt(1000, 9999)));
+        otp.setSentCount(otp.getSentCount() + 1);
+        otp.setSendTime(LocalDateTime.now());
 
 //            boolean isSend = service.sendNotification(
 //                    NotificationRequestDto.builder()
@@ -161,13 +163,13 @@ public class UserService extends
 //                            .phoneNumber(phoneNumber)
 //                            .build()
 //            );
-            boolean isSend = true;
-            if (isSend) {
-                System.out.println(otp.getCode());
-                otpRepository.save(otp);
-            } else {
-                throw new RuntimeException();
-            }
+        boolean isSend = true;
+        if (isSend) {
+            System.out.println(otp.getCode());
+            otpRepository.save(otp);
+        } else {
+            throw new RuntimeException();
+        }
 
     }
 
@@ -179,25 +181,27 @@ public class UserService extends
 
         if (passwordEncoder.matches(dto.getPassword(), user.getPassword()) && !user.getIsBlocked()) {
 
-                AbstractNotification service = notificationService.getService(NotificationType.SMS);
+            AbstractNotification service = notificationService.getService(NotificationType.SMS);
 
-                OTP otp = modelMapper.map(user, OTP.class);
-                otp.setCode(String.valueOf(new Random().nextInt(1000, 9999)));
-                otp.setSentCount(otp.getSentCount() + 1);
-                otp.setSendTime(LocalDateTime.now());
+            OTP otp = modelMapper.map(user, OTP.class);
+            otp.setCode(String.valueOf(new Random().nextInt(1000, 9999)));
+            otp.setSentCount(otp.getSentCount() + 1);
+            otp.setSendTime(LocalDateTime.now());
 
-                boolean isSend = true;
+            boolean isSend = true;
 
-                if (isSend) {
-                    System.out.println(otp.getCode());
-                    otpRepository.save(otp);
-                } else {
-                    throw new RuntimeException();
-                }
-        }else{
-                throw new RuntimeException(" password is incorrect");
+            if (isSend) {
+                System.out.println(otp.getCode());
+                otpRepository.save(otp);
+            } else {
+                throw new RuntimeException();
             }
-
-            return mapper.toResponseDto(user);
+        } else {
+            throw new RuntimeException(" password is incorrect");
         }
+
+        return mapper.toResponseDto(user);
+    }
+
+
 }

@@ -137,4 +137,16 @@ public class CustomExceptionHandler
                         .status(HttpStatus.UNAUTHORIZED)
                         .build());
     }
+
+    @ExceptionHandler(UserNameAllReadyTaken.class)
+    public ResponseEntity<CustomErrorResponse> handlePhoneNumberNotVerifiedException(UserNameAllReadyTaken e){
+        log.error(e.getMessage(),e);
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(CustomErrorResponse.builder()
+                        .message(e.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .status(HttpStatus.FORBIDDEN)
+                        .build());
+    }
 }
